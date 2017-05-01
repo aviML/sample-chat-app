@@ -1,0 +1,54 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Socket.IO</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { font: 13px Helvetica, Arial; }
+      form { background: #000; padding: 3px; position: fixed; bottom: 0; width: 100%; }
+      form input { border: 0; padding: 10px; width: 90%; margin-right: .5%; }
+      form button { width: 9%; background: rgb(130, 224, 255); border: none; padding: 10px; }
+      #messages { list-style-type: none; margin: 0; padding: 0; }
+      #messages li { padding: 5px 10px; }
+      #messages canvas {padding: 5px 10px;height: 400px;width:400px}
+      #messages li:nth-child(odd) { background: #eee; }
+    </style>
+  </head>
+  <body>
+    <ul id="messages"></ul>
+    <form action="">
+      <input id="m" autocomplete="off" /><button>Send</button>
+    </form>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js"></script>
+   <script
+  src="https://code.jquery.com/jquery-1.12.4.min.js"
+  integrity="sha256-ZosEbRLbNQzLpnKIkEdrPv7lOy9C27hHQ+Xp8a4MxAQ="
+  crossorigin="anonymous">
+  </script>
+    <script> $(()=>{console.log("now connecting")
+           var socket = io()
+           $('form').submit(function(){
+               var msg = $('#m').val()
+               socket.emit("chat message",msg)
+               $('#m').val('')
+               return false
+           })
+           socket.on('chat message',function(msg){
+             $('#messages').append($('<li>').text(msg))  
+           })
+           socket.on('image',function(info){
+               if(info.image){
+                  // console.log(info.buffer)
+                var img = new Image(100,100);
+                img.src = 'data:image/jpeg;base64,'+ info.buffer
+                //console.log(img.src)
+               $('#messages').append($('<canvas>'))
+               var ctx = $('canvas')[0].getContext('2d')
+               ctx.drawImage(img,0,0,img.width*1.5,img.height)
+                
+               }          
+            })
+           })
+           </script>
+  </body>
+</html>
